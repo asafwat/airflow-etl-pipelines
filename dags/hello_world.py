@@ -40,13 +40,24 @@ def hello_world():
     def announce_result(value: int):
         print(f"Final value passed through XCom: {value}")
 
+    @task
+    def verify_gitsync():
+        """Added via git push to verify gitSync pulls new DAG versions."""
+        import datetime
+        print("=" * 50)
+        print("This task was added via `git push` — gitSync working!")
+        print(f"Pod sees the new version at: {datetime.datetime.utcnow().isoformat()}")
+        print("=" * 50)
+
     # Define the DAG flow
     greeting = greet()
     total = add_two_numbers(7, 35)
     announcement = announce_result(total)
+    sync_check = verify_gitsync()
 
-    # Order: greet runs first, then add_two_numbers, then announce_result
+    # Order: greet → add → announce, then verify_gitsync runs in parallel after greet
     greeting >> total >> announcement
+    greeting >> sync_check
 
 
 hello_world()
