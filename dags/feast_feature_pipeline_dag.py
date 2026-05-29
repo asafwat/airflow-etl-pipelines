@@ -34,7 +34,7 @@ from kubernetes.client import (
 
 # ── Shared constants (mirrored in feast_apply_dag.py) ────────────────────────
 FEAST_NS = "feast"
-FEAST_IMAGE = "feast-feature-server:0.6"
+FEAST_IMAGE = "feast-feature-server:0.7"
 GIT_SYNC_IMAGE = "registry.k8s.io/git-sync/git-sync:v4.3.0"
 FEATURE_REPO_URL = "https://github.com/asafwat/feast-feature-repo.git"
 
