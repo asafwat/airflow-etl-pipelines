@@ -7,6 +7,7 @@ in the DAG; chaining them with >> defines dependencies.
 """
 
 from datetime import datetime, timedelta
+
 from airflow.sdk import dag, task
 
 

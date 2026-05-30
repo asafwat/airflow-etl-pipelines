@@ -29,8 +29,8 @@ from __future__ import annotations
 
 from datetime import datetime, timedelta
 
-from airflow.sdk import dag
 from airflow.providers.cncf.kubernetes.operators.pod import KubernetesPodOperator
+from airflow.sdk import dag
 from kubernetes.client import (
     V1Container,
     V1EmptyDirVolumeSource,

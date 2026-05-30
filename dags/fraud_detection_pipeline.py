@@ -16,6 +16,7 @@ Production talking points this demonstrates:
 """
 
 from datetime import datetime, timedelta
+
 from airflow.sdk import dag, task
 
 # ── Configuration ────────────────────────────────────────────────────────────
@@ -75,10 +76,9 @@ def fraud_detection_pipeline():
     @task
     def generate_data() -> str:
         """Generate synthetic transactions, upload raw CSV to MinIO."""
-        import io
         import pandas as pd
-        from sklearn.datasets import make_classification
         from airflow.sdk import get_current_context
+        from sklearn.datasets import make_classification
 
         ctx = get_current_context()
         run_id = ctx["dag_run"].run_id.replace(":", "_").replace("+", "_")
@@ -107,6 +107,7 @@ def fraud_detection_pipeline():
     def preprocess(raw_path: str) -> dict:
         """Read raw, train/test split, scale, write back to MinIO."""
         import io
+
         import pandas as pd
         from sklearn.model_selection import train_test_split
         from sklearn.preprocessing import StandardScaler
@@ -151,6 +152,7 @@ def fraud_detection_pipeline():
     def train(processed: dict) -> str:
         """Train a RandomForest, log params/model to MLflow, return run_id."""
         import io
+
         import mlflow
         import mlflow.sklearn
         import pandas as pd
@@ -195,11 +197,16 @@ def fraud_detection_pipeline():
     def evaluate(processed: dict, mlflow_run_id: str) -> dict:
         """Load model from MLflow, evaluate on test set, log metrics back."""
         import io
+
         import mlflow
         import pandas as pd
         from sklearn.metrics import (
-            accuracy_score, precision_score, recall_score,
-            f1_score, roc_auc_score, confusion_matrix,
+            accuracy_score,
+            confusion_matrix,
+            f1_score,
+            precision_score,
+            recall_score,
+            roc_auc_score,
         )
 
         mlflow.set_tracking_uri(MLFLOW_URI)

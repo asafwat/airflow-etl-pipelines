@@ -26,7 +26,7 @@ def test_dagbag_has_no_import_errors():
     """All files in dags/ must parse cleanly."""
     dag_bag = DagBag(dag_folder=str(DAGS_DIR), include_examples=False)
     assert not dag_bag.import_errors, (
-        f"DAG import errors:\n"
+        "DAG import errors:\n"
         + "\n".join(f"  {f}: {err}" for f, err in dag_bag.import_errors.items())
     )
 
