@@ -1,0 +1,50 @@
+# Continuous Integration for the Airflow DAG repository.
+#
+# What this catches:
+#   - Python syntax errors in any DAG file
+#   - Imports that fail (missing deps, typos)
+#   - Lint issues (style, unused vars, unsafe patterns)
+#   - DAGs that fail to construct (`DagBag` validates the whole directory)
+#
+# Without these checks, a bad DAG only fails when Airflow's scheduler tries
+# to parse it at runtime — by which point it's already deployed to the
+# cluster via gitSync. CI catches it at PR time.
+
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  lint-and-validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install dev dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements-dev.txt
+
+      - name: Lint with ruff
+        run: ruff check dags/ tests/
+
+      - name: Validate DAGs (import + DagBag)
+        run: pytest tests/ -v
+        env:
+          # Tell Airflow not to load example DAGs and not to try connecting to a real DB.
+          AIRFLOW__CORE__LOAD_EXAMPLES: "False"
+          AIRFLOW__CORE__UNIT_TEST_MODE: "True"
+          AIRFLOW__CORE__EXECUTOR: "SequentialExecutor"

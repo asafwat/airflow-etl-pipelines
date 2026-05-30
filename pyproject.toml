@@ -1,0 +1,27 @@
+# Ruff lint config for the Airflow DAG repository.
+# CI uses `ruff check dags/ tests/`.
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+# E,F = pyflakes + pycodestyle errors (the high-value default)
+# W   = pycodestyle warnings
+# I   = isort (import ordering)
+# UP  = pyupgrade (modernize syntax)
+# B   = flake8-bugbear (likely-bug patterns)
+select = ["E", "F", "W", "I", "UP", "B"]
+ignore = [
+  # Airflow DAGs commonly import `*` from operators / etc — allow it.
+  "F403", "F405",
+  # Airflow DAG files often have long task arguments.
+  "E501",
+]
+
+[tool.ruff.lint.per-file-ignores]
+# Tests can use assert statements freely.
+"tests/*" = ["S101"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra --tb=short"

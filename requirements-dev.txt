@@ -1,0 +1,10 @@
+# Dev dependencies for CI — NOT a runtime requirement of the DAGs themselves.
+# Airflow installs these on the worker; CI just needs them to parse the DAGs.
+#
+# Versions match Airflow 3.1.x (the version the lab cluster runs). Lower
+# Airflow versions WILL fail to parse the `airflow.sdk` imports used in
+# fraud_detection_pipeline.py and the feast DAGs.
+apache-airflow==3.1.0
+apache-airflow-providers-cncf-kubernetes==9.0.0
+ruff==0.7.4
+pytest==8.3.4
