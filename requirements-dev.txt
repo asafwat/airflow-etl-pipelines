@@ -1,10 +1,17 @@
-# Dev dependencies for CI — NOT a runtime requirement of the DAGs themselves.
-# Airflow installs these on the worker; CI just needs them to parse the DAGs.
+# Dev dependencies for local DAG development + CI.
 #
-# Versions match Airflow 3.1.x (the version the lab cluster runs). Lower
-# Airflow versions WILL fail to parse the `airflow.sdk` imports used in
-# fraud_detection_pipeline.py and the feast DAGs.
+# IMPORTANT: when installing these, also use Airflow's official constraints
+# file to pin transitive deps to the versions Airflow tested against —
+# without it, pip resolves to latest versions which breaks Airflow internals
+# (e.g. structlog 25 removed `Styles` that Airflow 3.1.0's logging imports):
+#
+#   AIRFLOW_VERSION=3.1.0
+#   PYTHON_VERSION=3.12
+#   CONSTRAINTS="https://raw.githubusercontent.com/apache/airflow/constraints-${AIRFLOW_VERSION}/constraints-${PYTHON_VERSION}.txt"
+#   pip install -r requirements-dev.txt --constraint "${CONSTRAINTS}"
+#
+# CI does this for you (see .github/workflows/ci.yml).
 apache-airflow==3.1.0
-apache-airflow-providers-cncf-kubernetes==9.0.0
+apache-airflow-providers-cncf-kubernetes
 ruff==0.7.4
 pytest==8.3.4
